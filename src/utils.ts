@@ -353,210 +353,209 @@ export class BilibiliParser {
 
     // 视频/链接解析
     if (this.config.videoParseComponents.length > 0) {
-      const fullAPIurl = `${this.config.apiUrl}${encodeURIComponent(lastretUrl)}`;
+      // 解析接口固定为米人 API 网关，无需在配置中填写
+      const fullAPIurl = `https://api-new.ifphp.com/api/svparse?url=${encodeURIComponent(lastretUrl)}`;
+      const headers: Record<string, string> = {
+        "User-Agent": this.config.userAgent,
+      };
+      if (this.config.apiKey) headers["X-API-Key"] = this.config.apiKey;
 
       try {
-        const responseData: any = await this.ctx.http.get(fullAPIurl);
+        const responseData: any = await this.ctx.http.get(fullAPIurl, {
+          headers,
+        });
 
+        const apiData = responseData?.data;
         if (
-          responseData.code === 0 &&
-          responseData.msg === "video" &&
-          responseData.data
+          responseData?.code === 200 &&
+          apiData &&
+          apiData.type === "video" &&
+          apiData.url
         ) {
-          const { bvid, cid, video } = responseData.data;
-          const bilibiliUrl = `https://api.bilibili.com/x/player/playurl?fnval=80&cid=${cid}&bvid=${bvid}`;
-          const playData: any = await this.ctx.http.get(bilibiliUrl);
+          // 视频直链（部分接口返回的 URL 被反引号包裹，统一去除）
+          const videoUrl = this.stripBackticks(apiData.url);
+          // 视频时长（秒），由接口直接返回
+          const videoDurationSeconds = Number(apiData.duration) || 0;
+          const videoDurationMinutes = videoDurationSeconds / 60;
 
-          if (
-            playData.code === 0 &&
-            playData.data &&
-            playData.data.dash &&
-            playData.data.dash.duration
-          ) {
-            const videoDurationSeconds = playData.data.dash.duration;
-            const videoDurationMinutes = videoDurationSeconds / 60;
-
-            // 检查视频是否太短
-            if (videoDurationMinutes < this.config.Minimumduration) {
-              // 根据 Minimumduration_tip 的值决定行为
-              if (this.config.Minimumduration_tip === "return") {
-                // 不返回文字提示，直接返回
-                return;
-              } else if (
-                typeof this.config.Minimumduration_tip === "object" &&
-                this.config.Minimumduration_tip !== null
-              ) {
-                // 返回文字提示
-                if (this.config.Minimumduration_tip.tipcontent) {
-                  if (this.config.Minimumduration_tip.tipanalysis) {
-                    videoElements.push(
-                      h.text(this.config.Minimumduration_tip.tipcontent),
-                    );
-                  } else {
-                    await session.send(
-                      this.config.Minimumduration_tip.tipcontent,
-                    );
-                  }
-                }
-
-                // 决定是否进行图文解析
-                shouldPerformTextParsing =
-                  this.config.Minimumduration_tip.tipanalysis === true;
-
-                // 如果不进行图文解析，清空已准备的文本元素
-                if (!shouldPerformTextParsing) {
-                  textElements = [];
+          // 检查视频是否太短
+          if (videoDurationMinutes < this.config.Minimumduration) {
+            // 根据 Minimumduration_tip 的值决定行为
+            if (this.config.Minimumduration_tip === "return") {
+              // 不返回文字提示，直接返回
+              return;
+            } else if (
+              typeof this.config.Minimumduration_tip === "object" &&
+              this.config.Minimumduration_tip !== null
+            ) {
+              // 返回文字提示
+              if (this.config.Minimumduration_tip.tipcontent) {
+                if (this.config.Minimumduration_tip.tipanalysis) {
+                  videoElements.push(
+                    h.text(this.config.Minimumduration_tip.tipcontent),
+                  );
+                } else {
+                  await session.send(
+                    this.config.Minimumduration_tip.tipcontent,
+                  );
                 }
               }
+
+              // 决定是否进行图文解析
+              shouldPerformTextParsing =
+                this.config.Minimumduration_tip.tipanalysis === true;
+
+              // 如果不进行图文解析，清空已准备的文本元素
+              if (!shouldPerformTextParsing) {
+                textElements = [];
+              }
             }
-            // 检查视频是否太长
-            else if (videoDurationMinutes > this.config.Maximumduration) {
-              // 根据 Maximumduration_tip 的值决定行为
-              if (this.config.Maximumduration_tip === "return") {
-                // 不返回文字提示，直接返回
-                return;
-              } else if (
+          }
+          // 检查视频是否太长
+          else if (videoDurationMinutes > this.config.Maximumduration) {
+            // 根据 Maximumduration_tip 的值决定行为
+            if (this.config.Maximumduration_tip === "return") {
+              // 不返回文字提示，直接返回
+              return;
+            } else if (
+              typeof this.config.Maximumduration_tip === "object" &&
+              this.config.Maximumduration_tip !== null
+            ) {
+              // 返回文字提示
+              if (this.config.Maximumduration_tip.tipcontent) {
+                if (this.config.Maximumduration_tip.tipanalysis) {
+                  videoElements.push(
+                    h.text(this.config.Maximumduration_tip.tipcontent),
+                  );
+                } else {
+                  await session.send(
+                    this.config.Maximumduration_tip.tipcontent,
+                  );
+                }
+              }
+
+              // 决定是否进行图文解析
+              shouldPerformTextParsing =
+                this.config.Maximumduration_tip.tipanalysis === true;
+
+              // 如果不进行图文解析，清空已准备的文本元素
+              if (!shouldPerformTextParsing) {
+                textElements = [];
+              }
+            }
+          } else {
+            // 视频时长在允许范围内，处理视频
+            let videoData: string = videoUrl; // 初始为原始 URL
+            let fileTooLarge = false; // 标记文件是否过大
+
+            if (
+              this.config.filebuffer &&
+              (options.audio ||
+                this.config.videoParseComponents.includes("video"))
+            ) {
+              try {
+                // 使用 Node.js 原生 fetch 下载视频（仅获取 header 检查大小）
+                const response = await fetch(videoUrl, {
+                  headers: {
+                    "User-Agent": this.config.userAgent,
+                    Referer: "https://www.bilibili.com/",
+                  },
+                });
+
+                if (!response.ok) {
+                  throw new Error(`HTTP ${response.status}`);
+                }
+
+                // 检查文件大小
+                const contentLength = response.headers.get("content-length");
+                const fileSizeMB = contentLength
+                  ? parseInt(contentLength) / 1024 / 1024
+                  : 0;
+                this.logInfo(`[下载] 视频大小: ${fileSizeMB.toFixed(2)}MB`);
+
+                // 检查是否超过配置的最大大小
+                const maxSize = this.config.MaximumFileSizeMB;
+                this.logInfo(`[下载] 配置的最大大小: ${maxSize}MB`);
+
+                if (maxSize > 0 && fileSizeMB > maxSize) {
+                  this.logger.warn(
+                    `[下载] 文件过大 (${fileSizeMB.toFixed(2)}MB > ${maxSize}MB)，跳过视频下载`,
+                  );
+                  // 标记文件过大，后续不加入视频元素
+                  fileTooLarge = true;
+                } else {
+                  this.logInfo(`[下载] 开始下载并转换为Base64...`);
+
+                  // 获取 MIME 类型
+                  const contentType = response.headers.get("content-type");
+                  const mimeType = contentType
+                    ? contentType.split(";")[0].trim()
+                    : "video/mp4";
+
+                  this.logInfo(`[下载] 读取响应体...`);
+                  // 读取响应体并转换
+                  const arrayBuffer = await response.arrayBuffer();
+                  this.logInfo(`[下载] 创建Buffer...`);
+                  const buffer = Buffer.from(arrayBuffer);
+                  this.logInfo(`[下载] 转换为Base64...`);
+                  const base64Data = buffer.toString("base64");
+                  videoData = `data:${mimeType};base64,${base64Data}`;
+
+                  this.logInfo(`[下载] 视频下载完成，已转换为Base64`);
+                }
+              } catch (error) {
+                this.logger.error("下载视频失败:", error);
+                // 出错时继续使用原始URL
+              }
+            }
+
+            if (fileTooLarge) {
+              // 文件过大：不发送视频，仅保留图文（textElements 已准备好）
+              // 根据 Maximumduration_tip 的逻辑决定是否追加提示语
+              if (
                 typeof this.config.Maximumduration_tip === "object" &&
                 this.config.Maximumduration_tip !== null
               ) {
-                // 返回文字提示
                 if (this.config.Maximumduration_tip.tipcontent) {
                   if (this.config.Maximumduration_tip.tipanalysis) {
+                    // 提示语合并到消息中
                     videoElements.push(
                       h.text(this.config.Maximumduration_tip.tipcontent),
                     );
                   } else {
+                    // 单独发送提示语
                     await session.send(
                       this.config.Maximumduration_tip.tipcontent,
                     );
                   }
                 }
-
-                // 决定是否进行图文解析
-                shouldPerformTextParsing =
-                  this.config.Maximumduration_tip.tipanalysis === true;
-
-                // 如果不进行图文解析，清空已准备的文本元素
-                if (!shouldPerformTextParsing) {
+                // 根据 tipanalysis 决定是否保留图文
+                if (!this.config.Maximumduration_tip.tipanalysis) {
                   textElements = [];
                 }
               }
-            } else {
-              // 视频时长在允许范围内，处理视频
-              let videoData: string = video.url; // 初始为原始 URL
-              let fileTooLarge = false; // 标记文件是否过大
-
-              if (
-                this.config.filebuffer &&
-                (options.audio ||
-                  this.config.videoParseComponents.includes("video"))
-              ) {
-                try {
-                  // 使用 Node.js 原生 fetch 下载视频（仅获取 header 检查大小）
-                  const response = await fetch(video.url, {
-                    headers: {
-                      "User-Agent": this.config.userAgent,
-                      Referer: "https://www.bilibili.com/",
-                    },
-                  });
-
-                  if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                  }
-
-                  // 检查文件大小
-                  const contentLength = response.headers.get("content-length");
-                  const fileSizeMB = contentLength
-                    ? parseInt(contentLength) / 1024 / 1024
-                    : 0;
-                  this.logInfo(`[下载] 视频大小: ${fileSizeMB.toFixed(2)}MB`);
-
-                  // 检查是否超过配置的最大大小
-                  const maxSize = this.config.MaximumFileSizeMB;
-                  this.logInfo(`[下载] 配置的最大大小: ${maxSize}MB`);
-
-                  if (maxSize > 0 && fileSizeMB > maxSize) {
-                    this.logger.warn(
-                      `[下载] 文件过大 (${fileSizeMB.toFixed(2)}MB > ${maxSize}MB)，跳过视频下载`,
-                    );
-                    // 标记文件过大，后续不加入视频元素
-                    fileTooLarge = true;
-                  } else {
-                    this.logInfo(`[下载] 开始下载并转换为Base64...`);
-
-                    // 获取 MIME 类型
-                    const contentType = response.headers.get("content-type");
-                    const mimeType = contentType
-                      ? contentType.split(";")[0].trim()
-                      : "video/mp4";
-
-                    this.logInfo(`[下载] 读取响应体...`);
-                    // 读取响应体并转换
-                    const arrayBuffer = await response.arrayBuffer();
-                    this.logInfo(`[下载] 创建Buffer...`);
-                    const buffer = Buffer.from(arrayBuffer);
-                    this.logInfo(`[下载] 转换为Base64...`);
-                    const base64Data = buffer.toString("base64");
-                    videoData = `data:${mimeType};base64,${base64Data}`;
-
-                    this.logInfo(`[下载] 视频下载完成，已转换为Base64`);
-                  }
-                } catch (error) {
-                  this.logger.error("下载视频失败:", error);
-                  // 出错时继续使用原始URL
-                }
-              }
-
-              if (fileTooLarge) {
-                // 文件过大：不发送视频，仅保留图文（textElements 已准备好）
-                // 根据 Maximumduration_tip 的逻辑决定是否追加提示语
-                if (
-                  typeof this.config.Maximumduration_tip === "object" &&
-                  this.config.Maximumduration_tip !== null
-                ) {
-                  if (this.config.Maximumduration_tip.tipcontent) {
-                    if (this.config.Maximumduration_tip.tipanalysis) {
-                      // 提示语合并到消息中
-                      videoElements.push(
-                        h.text(this.config.Maximumduration_tip.tipcontent),
-                      );
-                    } else {
-                      // 单独发送提示语
-                      await session.send(
-                        this.config.Maximumduration_tip.tipcontent,
-                      );
-                    }
-                  }
-                  // 根据 tipanalysis 决定是否保留图文
-                  if (!this.config.Maximumduration_tip.tipanalysis) {
-                    textElements = [];
-                  }
-                }
-                // 如果 Maximumduration_tip 为 null，则默认保留图文，不追加提示语
-              } else if (videoData) {
-                // 文件大小正常，正常发送视频/链接
-                if (options.link) {
-                  // 如果是链接选项，仍然使用原始URL
-                  videoElements.push(h.text(video.url));
-                } else if (options.audio) {
-                  videoElements.push(h.audio(videoData));
-                } else {
-                  if (this.config.videoParseComponents.includes("log")) {
-                    this.logInfo(video.url);
-                  }
-                  if (this.config.videoParseComponents.includes("link")) {
-                    videoElements.push(h.text(video.url));
-                  }
-                  if (this.config.videoParseComponents.includes("video")) {
-                    videoElements.push(h.video(videoData));
-                  }
-                }
+              // 如果 Maximumduration_tip 为 null，则默认保留图文，不追加提示语
+            } else if (videoData) {
+              // 文件大小正常，正常发送视频/链接
+              if (options.link) {
+                // 如果是链接选项，仍然使用原始URL
+                videoElements.push(h.text(videoUrl));
+              } else if (options.audio) {
+                videoElements.push(h.audio(videoData));
               } else {
-                throw new Error("解析视频直链失败");
+                if (this.config.videoParseComponents.includes("log")) {
+                  this.logInfo(videoUrl);
+                }
+                if (this.config.videoParseComponents.includes("link")) {
+                  videoElements.push(h.text(videoUrl));
+                }
+                if (this.config.videoParseComponents.includes("video")) {
+                  videoElements.push(h.video(videoData));
+                }
               }
+            } else {
+              throw new Error("解析视频直链失败");
             }
-          } else {
-            throw new Error("获取播放数据失败");
           }
         } else {
           throw new Error("解析视频信息失败或非视频类型内容");
@@ -610,6 +609,13 @@ export class BilibiliParser {
     const urlPattern = /https?:\/\/[^\s]+/g;
     const urls = text.match(urlPattern);
     return urls ? urls.pop() : null;
+  }
+
+  // 去除字符串首尾的反引号（部分接口返回的 URL 被反引号包裹）
+  private stripBackticks(url: string): string {
+    return String(url ?? "")
+      .replace(/^`+|`+$/g, "")
+      .trim();
   }
 
   // 检测BV / AV 号并转换为URL

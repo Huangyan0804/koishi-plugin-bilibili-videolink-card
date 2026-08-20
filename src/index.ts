@@ -34,7 +34,7 @@ export interface Config {
   MaximumFileSizeMB: number;
   middleware: boolean;
   userAgent: string;
-  apiUrl: string;
+  apiKey: string;
   loggerinfo: boolean;
   loggerinfofulljson: boolean;
   bufferDelay: number;
@@ -182,9 +182,11 @@ export const Config = Schema.intersect([
           .default(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
           ),
-        apiUrl: Schema.string()
-          .description("API 请求所用的 API 地址")
-          .default("http://api.xingzhige.com/API/b_parse/?url="),
+        apiKey: Schema.string()
+          .description(
+            "API Key（请访问 https://api-new.ifphp.com/auth/login 注册获取）",
+          )
+          .default(""),
       }).description("网络请求设置"),
       // 隐藏配置项
       Schema.object({

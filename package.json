@@ -1,8 +1,8 @@
 {
   "name": "@howie21/koishi-plugin-bilibili-video-card",
-  "description": "解析 B 站链接，生成含弹幕、热门评论的 PNG 图文卡片",
+  "description": "使用BugPk-Api解析 B 站链接，生成含弹幕、热门评论的 PNG 图文卡片",
   "license": "MIT",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "packageManager": "yarn@4.15.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -36,7 +36,7 @@
   },
   "koishi": {
     "description": {
-      "zh": "解析 B 站链接，生成含弹幕、热门评论的 PNG 图文卡片"
+      "zh": "使用BugPk-Api解析 B 站链接，生成含弹幕、热门评论的 PNG 图文卡片"
     }
   },
   "dependencies": {

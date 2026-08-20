@@ -2,7 +2,7 @@
 
 本项目 fork 自 [koishi-shangxue-plugins/koishi-shangxue-apps](https://github.com/koishi-shangxue-plugins/koishi-shangxue-apps/tree/main/) 中的 `bilibili-videolink-analysis` 插件。
 
-解析哔哩哔哩视频链接，并按需返回图文卡片、视频直链或视频文件。
+使用BugPk-Api解析哔哩哔哩视频链接，并按需返回图文卡片、视频直链或视频文件。
 
 本 fork 将原有文本图文替换为 Takumi 渲染的 PNG 视频卡片：卡片展示封面、时长、播放与互动统计、UP 主、弹幕、最多 5 条热门评论及评论用户等级。
 
@@ -23,11 +23,11 @@ yarn add @howie21/koishi-plugin-bilibili-video-card
 
 ## 配置
 
-在插件的「网络请求设置」中可自定义请求所用 API：
+在插件的「网络请求设置」中填写视频解析接口所需的 API Key：
 
-| 配置项   | 说明              | 默认值                                       |
-| -------- | ----------------- | -------------------------------------------- |
-| `apiUrl` | 视频解析 API 地址 | `http://api.xingzhige.com/API/b_parse/?url=` |
+| 配置项   | 说明                                             |
+| -------- | ------------------------------------------------ |
+| `apiKey` | BugPk-Api 的 API Key（必填，未填写时解析会失败） |
 
 ## 构建
 

@@ -37,6 +37,7 @@ export declare class BilibiliParser {
     private processQueue;
     private processVideoTask;
     private extractLastUrl;
+    private stripBackticks;
     convertBVToUrl(text: string): string[];
     private numeral;
     private getVideoUrl;

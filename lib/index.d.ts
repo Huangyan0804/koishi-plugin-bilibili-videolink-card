@@ -28,7 +28,7 @@ export interface Config {
     MaximumFileSizeMB: number;
     middleware: boolean;
     userAgent: string;
-    apiUrl: string;
+    apiKey: string;
     loggerinfo: boolean;
     loggerinfofulljson: boolean;
     bufferDelay: number;
@@ -66,7 +66,7 @@ export declare const Config: Schema<Schemastery.ObjectS<{
     middleware: Schema<boolean, boolean>;
 }> | Schemastery.ObjectS<{
     userAgent: Schema<string, string>;
-    apiUrl: Schema<string, string>;
+    apiKey: Schema<string, string>;
 }> | Schemastery.ObjectS<{
     parseLimit: Schema<number, number>;
     useNumeral: Schema<boolean, boolean>;
@@ -107,7 +107,7 @@ export declare const Config: Schema<Schemastery.ObjectS<{
     middleware: boolean;
 } & {
     userAgent: string;
-    apiUrl: string;
+    apiKey: string;
 } & {
     parseLimit: number;
     useNumeral: boolean;
