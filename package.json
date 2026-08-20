@@ -2,7 +2,7 @@
   "name": "@howie21/koishi-plugin-bilibili-video-card",
   "description": "解析 B 站链接，生成含弹幕、热门评论的 PNG 图文卡片",
   "license": "MIT",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "packageManager": "yarn@4.15.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -14,10 +14,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
-  "homepage": "https://github.com/Sor85/koishi-plugin-bilibili-videolink-card",
+  "homepage": "https://github.com/Huangyan0804/koishi-plugin-bilibili-videolink-card",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sor85/koishi-plugin-bilibili-videolink-card.git"
+    "url": "https://github.com/Huangyan0804/koishi-plugin-bilibili-videolink-card.git"
   },
   "keywords": [
     "chatbot",
