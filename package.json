@@ -1,5 +1,5 @@
 {
-  "name": "koishi-plugin-bilibili-videolink-card",
+  "name": "@howie21/koishi-plugin-bilibili-video-card",
   "description": "解析 B 站链接，生成含弹幕、热门评论的 PNG 图文卡片",
   "license": "MIT",
   "version": "0.0.7",
@@ -24,7 +24,7 @@
     "koishi",
     "plugin",
     "B站视频解析",
-    "bilibili-videolink-card"
+    "bilibili-video-card"
   ],
   "peerDependencies": {
     "koishi": "^4.18.7"

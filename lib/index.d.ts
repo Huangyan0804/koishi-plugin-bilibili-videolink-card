@@ -1,5 +1,5 @@
 import { Schema, Context } from "koishi";
-export declare const name = "bilibili-videolink-card";
+export declare const name = "howie21/bilibili-video-card";
 export declare const usage = "\n";
 export interface Config {
     enablebilianalysis: boolean;

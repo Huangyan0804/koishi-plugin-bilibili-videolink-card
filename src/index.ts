@@ -1,9 +1,9 @@
 import { Schema, Logger, Context } from "koishi";
 import { BilibiliParser } from "./utils";
 
-const logger = new Logger("bilibili-videolink-card");
+const logger = new Logger("bilibili-video-card");
 
-export const name = "bilibili-videolink-card";
+export const name = "howie21/bilibili-video-card";
 export const usage = `
 `;
 
@@ -85,7 +85,7 @@ export const Config = Schema.intersect([
         BVnumberParsing: Schema.boolean()
           .default(true)
           .description(
-            "是否允许根据`独立的BV、AV号`解析视频 `开启后，可以通过视频的BV、AV号解析视频。` <br>  [触发说明见README](https://www.npmjs.com/package/koishi-plugin-bilibili-videolink-card)",
+            "是否允许根据`独立的BV、AV号`解析视频 `开启后，可以通过视频的BV、AV号解析视频。` <br>  [触发说明见README](https://www.npmjs.com/package/@howie21/koishi-plugin-bilibili-video-card)",
           ),
       }).description("基础解析设置"),
       // 视频过滤规则

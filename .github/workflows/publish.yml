@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     tags:
-      - 'koishi-plugin-bilibili-videolink-card@*'
+      - '@howie21/koishi-plugin-bilibili-video-card@*'
 
 permissions:
   contents: read

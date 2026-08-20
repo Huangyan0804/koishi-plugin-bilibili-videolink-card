@@ -142,6 +142,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@howie21/koishi-plugin-bilibili-video-card@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@howie21/koishi-plugin-bilibili-video-card@workspace:."
+  dependencies:
+    "@fontsource-variable/noto-sans-kr": "npm:5.2.10"
+    "@fontsource-variable/noto-sans-sc": "npm:5.2.10"
+    "@fontsource/dejavu-sans": "npm:5.2.5"
+    "@takumi-rs/core": "npm:1.8.7"
+    "@takumi-rs/helpers": "npm:1.8.7"
+    "@types/node": "npm:^22.13.10"
+    koishi: "npm:^4.18.7"
+    typescript: "npm:^5.7.3"
+  peerDependencies:
+    koishi: ^4.18.7
+  languageName: unknown
+  linkType: soft
+
 "@koa/router@npm:^10.1.1":
   version: 10.1.1
   resolution: "@koa/router@npm:10.1.1"
@@ -1281,23 +1298,6 @@ __metadata:
   checksum: 10c0/bf21ffcf409bf847dca3f60349fc64a3b33e725e0ced3f405192a22fa51b4211cac29748f51df9674df82ca87691b3bdda64bbf80755ba6cdc6b2f35e878b0f5
   languageName: node
   linkType: hard
-
-"koishi-plugin-bilibili-videolink-card@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "koishi-plugin-bilibili-videolink-card@workspace:."
-  dependencies:
-    "@fontsource-variable/noto-sans-kr": "npm:5.2.10"
-    "@fontsource-variable/noto-sans-sc": "npm:5.2.10"
-    "@fontsource/dejavu-sans": "npm:5.2.5"
-    "@takumi-rs/core": "npm:1.8.7"
-    "@takumi-rs/helpers": "npm:1.8.7"
-    "@types/node": "npm:^22.13.10"
-    koishi: "npm:^4.18.7"
-    typescript: "npm:^5.7.3"
-  peerDependencies:
-    koishi: ^4.18.7
-  languageName: unknown
-  linkType: soft
 
 "koishi@npm:^4.18.7":
   version: 4.18.11

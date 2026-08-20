@@ -1,4 +1,4 @@
-# koishi-plugin-bilibili-videolink-card
+# @howie21/koishi-plugin-bilibili-video-card
 
 本项目 fork 自 [koishi-shangxue-plugins/koishi-shangxue-apps](https://github.com/koishi-shangxue-plugins/koishi-shangxue-apps/tree/main/) 中的 `bilibili-videolink-analysis` 插件。
 
@@ -16,7 +16,7 @@
 ## 安装
 
 ```sh
-yarn add koishi-plugin-bilibili-videolink-card
+yarn add @howie21/koishi-plugin-bilibili-video-card
 ```
 
 图文卡片由插件内置的 Takumi 渲染，不需要额外安装浏览器或 Puppeteer 服务。
