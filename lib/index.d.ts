@@ -9,12 +9,12 @@ export interface Config {
     BVnumberParsing: boolean;
     MinimumTimeInterval: number;
     Minimumduration: number;
-    Minimumduration_tip: 'return' | {
+    Minimumduration_tip: "return" | {
         tipcontent: string;
         tipanalysis: boolean;
     } | null;
     Maximumduration: number;
-    Maximumduration_tip: 'return' | {
+    Maximumduration_tip: "return" | {
         tipcontent: string;
         tipanalysis: boolean;
     } | null;
@@ -28,6 +28,7 @@ export interface Config {
     MaximumFileSizeMB: number;
     middleware: boolean;
     userAgent: string;
+    apiUrl: string;
     loggerinfo: boolean;
     loggerinfofulljson: boolean;
     bufferDelay: number;
@@ -65,6 +66,7 @@ export declare const Config: Schema<Schemastery.ObjectS<{
     middleware: Schema<boolean, boolean>;
 }> | Schemastery.ObjectS<{
     userAgent: Schema<string, string>;
+    apiUrl: Schema<string, string>;
 }> | Schemastery.ObjectS<{
     parseLimit: Schema<number, number>;
     useNumeral: Schema<boolean, boolean>;
@@ -105,6 +107,7 @@ export declare const Config: Schema<Schemastery.ObjectS<{
     middleware: boolean;
 } & {
     userAgent: string;
+    apiUrl: string;
 } & {
     parseLimit: number;
     useNumeral: boolean;

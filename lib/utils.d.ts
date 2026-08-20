@@ -1,5 +1,5 @@
 import { Logger, Context, Session } from "koishi";
-import type { Config } from './index';
+import type { Config } from "./index";
 export declare class BilibiliParser {
     private ctx;
     private config;
@@ -73,21 +73,21 @@ export declare class BilibiliParser {
      */
     private gen_context;
     /**
-    * 链接类型解析
-    * @param content 传入消息
-    * @returns type: "链接类型", id :"内容ID"
-    */
+     * 链接类型解析
+     * @param content 传入消息
+     * @returns type: "链接类型", id :"内容ID"
+     */
     private link_type_parser;
     /**
-    * 类型执行器
-    * @param element 链接列表
-    * @returns 解析来的文本
-    */
+     * 类型执行器
+     * @param element 链接列表
+     * @returns 解析来的文本
+     */
     private type_processer;
     /**
-    * 根据短链接重定向获取正常链接
-    * @param id 短链接 ID
-    * @returns 正常链接
-    */
+     * 根据短链接重定向获取正常链接
+     * @param id 短链接 ID
+     * @returns 正常链接
+     */
     private get_redir_url;
 }

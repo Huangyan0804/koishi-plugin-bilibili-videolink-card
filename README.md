@@ -21,6 +21,14 @@ yarn add koishi-plugin-bilibili-videolink-card
 
 图文卡片由插件内置的 Takumi 渲染，不需要额外安装浏览器或 Puppeteer 服务。
 
+## 配置
+
+在插件的「网络请求设置」中可自定义请求所用 API：
+
+| 配置项   | 说明              | 默认值                                       |
+| -------- | ----------------- | -------------------------------------------- |
+| `apiUrl` | 视频解析 API 地址 | `http://api.xingzhige.com/API/b_parse/?url=` |
+
 ## 构建
 
 ```sh
